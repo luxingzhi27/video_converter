@@ -67,13 +67,23 @@ namespace Ui{
 
         void convert(){
             ui->startButton->setDisabled(true);
+            ui->startButton->setText("转换中...");
+            ui->startButton->repaint();
+            ui->targetTypeComboBox->setDisabled(true);
+            ui->openFileButton->setDisabled(true);
+            ui->saveFileButton->setDisabled(true);
 #if defined(WIN32)
             auto command=".\\ffmpeg.exe -i "+source.string()+" "+target.string();
 #else
-            auto command="./ffmpeg -i "+source.string()+" "+target.string();
+            auto command="ffmpeg -i "+source.string()+" "+target.string();
 #endif
             system(command.c_str());
+            ui->startButton->setText("开始转换");
+            ui->startButton->repaint();
             ui->startButton->setEnabled(true);
+            ui->saveFileButton->setDisabled(false);
+            ui->openFileButton->setDisabled(false);
+            ui->targetTypeComboBox->setDisabled(false);
         }
     };
 }
