@@ -12,7 +12,7 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(video_converter main.cpp video_converter_ui.cpp)
+add_executable(video_converter main.cpp video_converter_ui.cpp success_ui.cpp)
 target_link_libraries(video_converter
         Qt5::Core
         Qt5::Gui

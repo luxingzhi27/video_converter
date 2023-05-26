@@ -1,22 +1,40 @@
 #include "video_converter_ui.cpp"
+#include "success_ui.cpp"
 #include <QFileDialog>
 #include <QObject>
-#include <iostream>
+#include <QThread>
 #include <filesystem>
 #include <stdlib.h>
+#include <string>
 
 using namespace std::filesystem;
 
 namespace Ui{
+    class SuccessDialog:public QDialog{
+    private:
+        Ui_successDialog* ui;
+    public:
+        SuccessDialog(QWidget* parent=nullptr): QDialog(parent){
+            ui=new Ui_successDialog();
+            ui->setupUi(this);
+            QObject::connect(ui->pushButton,&QPushButton::clicked,this,&SuccessDialog::close);
+        }
+        ~SuccessDialog(){
+            delete ui;
+        }
+    };
+
     class VideoConverter: public QMainWindow{
     private:
         path source;
         path target;
         path targetDir;
         Ui_MainWindow* ui;
+        SuccessDialog* dialog;
     public:
         VideoConverter(QWidget *parent= nullptr): QMainWindow(parent){
             ui=new Ui_MainWindow();
+            dialog=new SuccessDialog();
             ui->setupUi(this);
             ui->saveFileButton->setDisabled(true);
             ui->startButton->setDisabled(true);
@@ -29,6 +47,7 @@ namespace Ui{
     private:
         ~VideoConverter(){
             delete ui;
+            delete dialog;
         }
 
     private slots:
@@ -78,6 +97,7 @@ namespace Ui{
             auto command="ffmpeg -i "+source.string()+" "+target.string();
 #endif
             system(command.c_str());
+            dialog->show();
             ui->startButton->setText("开始转换");
             ui->startButton->repaint();
             ui->startButton->setEnabled(true);
